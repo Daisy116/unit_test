@@ -1,0 +1,39 @@
+laravel 參數驗證
+laravel 中介層(middleware)
+
+!!!!
+參數驗證寫在controller中!!!
+middleware寫的是判斷會員是否有登入
+!!!!
+
+Arr::
+Redis::
+==========================================================================
+docker 創一個容器，內含nginx、php、以及自己的專案(例如helloworld)
+然後可以開啟docker的container(port號設定?)
+
+查 docker yml檔 container
+
+==========================================================================
+Laravel pub/sub  Resid佇列  單執行緒??  工作排序!!  非同步執行...
+情境是資料儲存起來，然後一個個拉出來處理??  
+Laravel config event collect(集合)
+
+做完找人看結構(請人傳檔案過來看看)
+
+
+
+
+
+
+
+
+
+
+
+
+
+redis-pub sub 
+laravel-collect.event.config 
+-學習laravel-queue 
+-學習ELK+GPE 

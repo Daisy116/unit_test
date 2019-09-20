@@ -1,0 +1,37 @@
+https://ithelp.ithome.com.tw/articles/10190921     !!!!!!!!!!!!!!!!
+
+[使用 Docker的名詞介紹]
+
+Docker image：
+  它是 Docker 的映像檔主要是一個唯讀的檔案，是啟動 Docker container 要使用到的檔案。
+  Docker Image 要從哪裡來？
+    -從網路上的 Docker Hub pull下來
+    -從另外一台電腦上的 Docker image export 出來，然後在 import 到自已的電腦
+    -自行撰寫 Dockerfile
+
+Docker Container：
+  Docker Container 是透過 Docker image 執行起來的 Process，
+  同一個 Docker image 可以啟動多個 Docker Container。
+  Docker container 和 Docker container 之間的環境是隔離開離來的，不會發生 
+  container1 開 8080 的 port，container2 開 8080 的 port 有衝到的問題。
+
+Docker Hub：
+  Docker Hub 可以把它想像成 GitHub，GitHub是用來存放程式碼的倉庫，
+  Docker Hub是來存放 Docker image的倉庫。
+  可以使用網路上公開的 Docker Hub，或是在自已的內部環境下架設一個私有的Docker Hub， 
+  又被稱為 Docker Registry。
+
+========================================================================================
+有了 Docker Image 之後就可以把 container 執行起來了並且進入 Docker Container 的 terminal 
+裡面，指令如下:
+docker run -it <repository> /bin/bash 
+
+要退出 docker container 的terminal，並且不要停止 container的話 
+需要輸入ctrl + p之後再輸入 ctrl + q 的按鍵，就不會把 container 關閉。(否則輸入exit指令
+，container會被關閉!!)
+
+要確認 docker container 有正常的執行，看這指令的STATUS是否為UP
+docker ps -a
+
+查看 docker container 的 IP
+cat /etc/hosts

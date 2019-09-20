@@ -1,0 +1,150 @@
+php artisan make:controller <檔名>
+php artisan make:command <檔名>
+php artisan event:generate      讓app/Providers/EventServiceProvider.php中的指令執行，建立app/Events/BlogView.php和app/Listeners/BlogViewListener.php
+===================================================================================================
+安装 Redis!!
+http://www.runoob.com/redis/redis-install.html      !!!!!!!!
+sudo apt-get update
+sudo apt-get install redis-server
+redis-server     #启动 Redis
+
+redis-cli        #查看 redis 是否启动？(正常的話會打开以下终端)
+redis 127.0.0.1:6379>PING       
+(ps:127.0.0.1 是本机 IP ，6379 是 redis 服务端口)
+(执行 PING 命令，该命令用于检测 redis 服务是否启动，如果正常，會回應PONG)
+
+#在远程 redis 服务上执行命令
+redis-cli -h <host_ip> -p <port> -a <password>
+
+service redis-server restart    #重啟Redis
+===================================================================================================
+Redis支持五种数据类型：
+string(字符串):redis 的 string 可以包含任何数据。比如jpg图片或者序列化的对象
+hash（哈希）
+list（列表）
+set（集合）
+zset(sorted set：有序集合)
+===================================================================================================
+Redis基本操作: (redis-cli  之後)
+redis-cli  --raw      !!!才能get顯示出中文字來!!!
+https://ithelp.ithome.com.tw/articles/10105731      !!!!!!!
+
+#Redis选择切换库
+select 0~15
+select 1     #切換到不同的資料庫以select執行，預設是使用0
+select 0     #切換回原本的資料庫
+***************************************************************************************************
+STRING
+keys *        #列出現有所有的 key   (key可取名為hit:player:twtw)
+KEYS runoob*  #查找以 runoob 为开头(pattern)的 key
+set <key> <value>
+get <key>
+del <key>    #刪除指定的 key
+EXISTS <key> #檢查指定的key是否存在
+
+Expire <key> <TIME_IN_SECONDS>            #设置 key 的过期时间,单位以秒计,時間過后该键会自动删除
+Expireat <key> <TIME_IN_UNIX_TIMESTAMP>   #以 UNIX 时间戳格式(例如1293840000)设置 key 的过期时间
+
+incr <key>   #每輸入一次incr,就把這個key的值加1(從0開始)
+incrby <key> <數字>  #incrby指定一次累加多少數字
+decr <key>   #decr,每次遞減1
+decrby <key> <數字>  #decrby指定一次減多少數字
+***************************************************************************************************
+HASH
+HMSET <hash_name> <key1> <value1> <key2> <value2>   #可在該hash_name中加入非常多組key-value
+HGET <hash_name> <keyn>         #取出第n筆的key的值(value)
+***************************************************************************************************
+LIST
+lpush <list_name> <值1(數字或字串)> <值2> <值3> ...
+#該列表增加幾筆資料(越後面的,越新加入,會在列表的標號前面)
+
+lrange <list_name> 0 -1         #列出該列表的所有資料編號和其值
+ltrim <list_name> 0 2           #只保留列表的前三個訊息,其餘刪除!!(0,1,2保留)
+lrem <list_name> -1 <值(數字)>  #刪掉其中某一筆值而已
+lpop <list_name>                #從編號前面的pop出第一個,相當於刪除第一筆資料
+***************************************************************************************************
+SET  (為无序集合!使用sadd 命令,成功返回1，如果元素已经在集合中返回 0。因為根据集合内元素的唯一性，若第二次插入已在集合中的元素,将被忽略,返回0)
+sadd <set_name> <值> <值> <值> ...
+#可一次性在集合中增加很多值
+
+smembers <set_name>     #將集合元素全部顯示
+***************************************************************************************************
+zset(sorted set：有序集合。每个元素都会关联一个double类型的分数。redis正是通过分数来为集合中的成员进行从小到大的排序。zset的成员是唯一的,但分数(score)却可以重复。)
+zadd <key> <score(可為小數點)> <value>    #新增一組資料進zset
+ZRANGEBYSCORE <key> 0 1000                #列出所有zset
+***************************************************************************************************
+hmset <key> <value1> <value2> <value3> <value4> ...
+#用hmset同時設好幾個key value,value可為英文,可為中文(中文用""刮起來?)
+
+hgetall <key>                    #一次抓該key的所有的值
+===================================================================================================
+???
+查看过滤信息
+redis-cli -r -1 -i 1 INFO | grep rss_human
+-r 表示请求几次，-1表示连续查询
+-i 表示请求间隔，1表示1秒查询1次
+例如：
+redis-cli -r 3 -i 3 INFO | grep rss_human
+===================================================================================================
+在 Laravel 中使用 Redis
+!!!!!!!!!!!!!!!!!!!!!!!!!
+需要下載：   composer require predis/predis
+https://github.com/laravel/horizon/issues/659      !!!!!!!!改這兩個設定好像真的有用
+
+
+
+https://www.codecasts.com/blog/post/use-redis-in-laravel   !!!!!!!!!!!!!!!!
+http://www.mayanlong.com/archives/2017/402.html   
+https://www.cnblogs.com/ikodota/archive/2012/03/05/php_redis_cn.html   !!!沒練完
+https://redis.io/commands
+
+練習用Redis寫留言板
+https://www.itread01.com/content/1542344290.html    !!!!!!!!!!!!!!!
+
+
+
+===================================================================================================
+Laravel參數驗證  Validation
+use Illuminate\Support\Facades\Validator;      #要加上這一行,才可使用Validator::make
+https://blog.csdn.net/i6448038/article/details/51246045   !!!!!!!!(後面的provider不懂,沒連資料庫吧?)
+https://blog.keniver.com/2017/05/laravel-optional-integer-input-length-check/     !!!!
+
+在resources/lang/en/validation.php中改錯誤訊息成中文字!!
+
+
+
+Laravel 的 Validation 非常強大, 若要讓欄位選填並且只有在有填寫內容時才進行其他驗證, 可以使用內建的 nullable 達到效果, 而不需要使用 required  !!!!!!!!!!!!
+驗證數字可以用 numeric 來達到驗證, numeric 和 integer 的差別??
+用 Laravel 內建 Validation 進行長度檢查時，如果用 min 與 max 來檢查, 結果無論如何都會觸發長度過長的錯誤, 仔細看過手冊後發現 Laravel 會去猜輸入的型別, 如果猜測結果是數字則 min, max 會變成比大小(min < x < max) 而不是預期的長度檢查, 正確長度檢查要使用 digits_between 這個規則才對 !!!!!!!!!!
+===================================================================================================
+Laravel middleware練習
+https://ithelp.ithome.com.tw/articles/10208371?sc=iThelpR    !!!!!!!!!!!!!!
+
+Artisan command:   php artisan make:middleware <filename>
+
+在app/Http/Kernel.php中的protected $routeMiddleware加上     
+    = [
+        'before' => \App\Http\Middleware\BeforeMiddleware::class,
+        'after' => \App\Http\Middleware\AfterMiddleware::class,
+    ];
+
+接著在routes/web.php中加上
+Route::middleware('before')->get('/before', function (){
+    echo 'in Route';
+});
+
+Route::middleware('after')->get('/after', function (){
+    echo 'in Route';
+});
+===================================================================================================
+
+https://ithelp.ithome.com.tw/articles/10195022      // redis Pub/Sub的簡單終端指令
+https://ithelp.ithome.com.tw/articles/10106385    !!!!!但和laravel無關...
+http://hk.voidcc.com/question/p-mlxhiker-yd.html   ??
+
+以下測試失敗
+https://www.cnblogs.com/phpper/p/6867786.html
+https://phperzh.com/articles/2947
+https://www.cnblogs.com/yanweifeng/p/10565423.html
+https://github.com/laravel/horizon/issues/659   更改這篇寫的配置
+

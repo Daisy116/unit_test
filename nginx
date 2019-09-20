@@ -1,0 +1,228 @@
+/etc/connectNginx
+===================================================================================================
+// 先將apache關閉
+dw@dw-VirtualBox:~$ sudo /etc/init.d/apache2 stop
+[sudo] password for dw: 
+[ ok ] Stopping apache2 (via systemctl): apache2.service.
+
+// 安裝nginx
+dw@dw-VirtualBox:~$ sudo apt-get install nginx
+
+// 查詢設定路徑檔
+dw@dw-VirtualBox:~$ sudo nginx -t
+nginx: the configuration file /etc/nginx/nginx.conf syntax is ok
+nginx: configuration file /etc/nginx/nginx.conf test is successful
+
+// 啟動nginx?
+dw@dw-VirtualBox:~$ sudo /etc/init.d/nginx start
+[ ok ] Starting nginx (via systemctl): nginx.service.
+
+// 確認有無開啟nginx
+dw@dw-VirtualBox:~$ ps -ef|grep nginx
+dw@dw-VirtualBox:~$ sudo netstat -anp|grep :80
+
+// 關閉nginx
+sudo service nginx stop
+sudo service mysql stop
+
+// 重啟nginx
+service nginx restart
+// 重啟php-fpm
+systemctl restart php7.2-fpm
+// 重啟mysql
+sudo /etc/init.d/mysql start
+
+// 看有無啟動php-fpm
+dw@dw-VirtualBox:/var/www/html$ systemctl status php7.2-fpm.service
+service php7.2-fpm status
+
+dw@dw-VirtualBox:/etc$ sudo vi hosts
+127.0.0.1       localhost
+
+// 看error log !!!!!!!!!!!!!!!!!!!!!!!!!!
+dw@dw-VirtualBox:/var/log/nginx$ cat error.log
+cat /var/log/nginx/error.log 
+
+apt-get autoremove
+apt-get autoclean
+
+去除缓存
+php artisan config:clear
+
+把崩潰報告刪除，這樣就不會出現那個提示了。（下一次有程式崩潰之後還是會出現新的）
+sudo rm /var/crash/*
+===================================================================================================
+COMPOSER:
+php --version
+# For php v7.2
+sudo apt-get install php7.2-zip
+
+通常會死在這邊最直接的原因是 composer 沒有完整安裝所照成的
+
+請嘗試安裝composer
+sudo composer install
+
+更新
+sudo composer update
+
+若更新composer時遇到這個問題
+proc_open(): fork failed - Cannot allocate memory 
+solution:  (https://stackoverflow.com/questions/24846346/composer-update-trouble)
+dw@dw-VirtualBox:/etc$ sudo touch swap.img
+dw@dw-VirtualBox:/etc$ sudo chmod 600 swap.img
+dw@dw-VirtualBox:/etc$ sudo dd if=/dev/zero of=/var/swap.img bs=1024k count=1000
+dw@dw-VirtualBox:/etc$ sudo mkswap /var/swap.img
+dw@dw-VirtualBox:/etc$ sudo swapon /var/swap.img
+然後此時dw@dw-VirtualBox:/etc$ sudo composer update  ,就能正常執行!!
+
+用composer新建laravel:
+composer create-project --prefer-dist laravel/laravel <Project Name>
+
+使用Laravel提交POST请求出现The page has expired
+是因為少了  @csrf    的token!!!!!!!!!!!!!!!!!!
+===================================================================================================
+當nginx連laravel(browser打localhost),發生permission deny
+https://stackoverflow.com/questions/35097393/laravel-permission-denied     !!!!!!!!!!!!!!
+
+https://blog.gtwang.org/linux/ubuntu-linux-laravel-nginx-mariadb-installation-tutorial/  !!
+https://blog.csdn.net/lgyaxx/article/details/79507525   !!有部份失敗
+===================================================================================================
+增加hosts,才能在瀏覽器中找到網域名
+sudo vi /etc/hosts
+例如:127.0.0.1       dw.localhost
+     127.0.0.1       dw.local
+然後在到nginx設定檔增加server{location{}}
+dw@dw-VirtualBox:/etc/nginx/sites-available$ sudo vi default
+最後重啟nginx
+service nginx restart
+===================================================================================================
+開啟laravel server,可更改ip和port,但$_SERVER中不會改變...?
+php artisan serve --host=0.0.0.0 --port=8080
+===================================================================================================
+docker!!
+https://blog.csdn.net/wd2014610/article/details/80340991    安裝docker成功
+https://ithelp.ithome.com.tw/articles/10190824              !!
+https://hub.docker.com/     #docker hub
+
+在linux安裝docker的步驟
+lsb_release -a
+apt-get update
+
+sudo apt-get install \
+    apt-transport-https \
+    ca-certificates \
+    curl \
+    software-properties-common
+
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+sudo apt-key fingerprint 0EBFCD88
+lsb_release -cs
+dpkg --print-architecture
+
+sudo add-apt-repository \
+   "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
+   $(lsb_release -cs) \
+   stable"
+
+sudo apt-get update
+sudo apt-get install docker-ce
+sudo docker run hello-world
+
+sudo docker version   #確認docker安裝版本
+sudo systemctl start docker    #啟動docker的server指令
+sudo docker images    #查看已有的docker image
+sudo docker ps        #查看到容器的端口映射
+
+sudo usermod -aG docker dw    #之後使用 docker 指令時不想要一直打 sudo 的話，可以將自己的帳號加到 docker 這個群組
+
+如果要重新载入container
+sudo docker kill -s HUP container-name
+
+重启容器命令
+sudo docker restart container-name
+===================================================================================================
+在Docker 安装 Nginx
+http://www.runoob.com/docker/docker-install-nginx.html     !!!!!!!!!!!!!!
+sudo docker search nginx     #查找 Docker Hub 上的 nginx 镜像
+sudo docker pull nginx       #拉取(下載)官方的镜像
+sudo docker images nginx     #在本地镜像列表里查到 REPOSITORY 为 nginx 的镜像
+
+sudo docker run --name runoob-nginx-test -p 8081:80 -d nginx     
+#使用 NGINX 默认的配置来启动一个 Nginx 容器实例,其中--name将容器命名为runoob-nginx-test!!而其中的-p 8081:80代表端口映射，把 nginx 中的 80 映射到本地的 8081 端口(在执行以上命令後,会生成一串字符串，这个表示容器的 ID，一般可作为日志的文件名)
+
+sudo docker ps               #查看容器是否有在运行
+在浏览器中打开 http://127.0.0.1:8081/   ,會跑出Welcome to nginx!頁面
+
+
+
+
+
+nginx 部署 
+
+mkdir -p ~/nginx/www ~/nginx/logs ~/nginx/conf   
+#在~/路徑中,创建目录 nginx,以及底下的www,logs,conf資料夾
+
+sudo docker cp c1cfe4247cf5:/etc/nginx/nginx.conf ~/nginx/conf   
+#拷贝容器内 Nginx 默认配置文件到本地当前目录下的 conf 目录，容器 ID 可以查看 sudo docker ps 命令输入中的第一列
+
+sudo docker run -d -p 8082:80 --name runoob-nginx-test-web -v ~/nginx/www:/usr/share/nginx/html -v ~/nginx/conf/nginx.conf:/etc/nginx/nginx.conf -v ~/nginx/logs:/var/log/nginx nginx     
+#其中-p 8082:80代表端口映射，把 nginx 中的 80 映射到本地的 8082 端口
+到時候在瀏覽器用http://127.0.0.1:8082/  打開!!!!
+
+cd ~/nginx/www     #移動到www目錄
+touch index.html   #创建 index.html 文件
+vi index.html      #內容設定,然後就可以開瀏覽器http://127.0.0.1:8082/
+===================================================================================================
+在Docker 安装 PHP + Nginx
+http://www.runoob.com/docker/docker-install-php.html      !!!!!!!!!!!!!
+sudo docker search php         #查找Docker Hub上的php镜像
+sudo docker pull php:7.2-fpm   #拉取官方的镜像,标签(tag)为7.2-fpm
+sudo docker images             #在本地镜像列表里查到REPOSITORY为php,标签为5.6-fpm的镜像
+sudo docker run --name  myphp-fpm -v ~/nginx/www:/www  -d php:7.2-fpm     #启动 PHP,其中--name 代表将容器命名为 myphp-fpm
+mkdir ~/nginx/conf/conf.d      #创建 ~/nginx/conf/conf.d 目录
+cd ~/nginx/conf/conf.d
+touch runoob-test-php.conf     #新增 ~/nginx/conf/conf.d/runoob-test-php.conf 文件
+vi runoob-test-php.conf
+
+sudo docker run --name runoob-php-nginx -p 8083:80 -d     -v ~/nginx/www:/usr/share/nginx/html:ro     -v ~/nginx/conf/conf.d:/etc/nginx/conf.d:ro     --link myphp-fpm:php     nginx
+#启动 nginx,其中-p 8083:80代表端口映射，把 nginx 中的 80 映射到本地的 8083 端口
+
+cd  ~/nginx/www                 #移動到 ~/nginx/www 目录下
+touch index.php                 #创建 index.php
+vi index.php
+
+最後,浏览器打开 http://127.0.0.1:8083/index.php
+===================================================================================================
+在docker中開啟laravel專案
+
+http://jsnwork.kiiuo.com/archives/2932/ubuntu-18-%E4%BD%BF%E7%94%A8-docker-%E5%BB%BA%E7%AB%8B-phplaravelnginxmysqlphpmyadmin/            !!!!!!!!!!!!!!!!!!!!!!!!!!
+使用 Docker 建立php+Laravel+Nginx+MySQL+phpMyAdmin
+
+先關閉本地端的nginx和mysql和redis
+sudo service nginx stop
+sudo service mysql stop
+sudo service redis-server stop
+
+啟動container?
+dw@dw-VirtualBox:~/projects/laradock$ sudo docker-compose up -d nginx mysql redis
+
+專案位置
+dw@dw-VirtualBox:~/projects/laravel-test$
+
+換不同laravel專案的方法!!!
+Step1
+dw@dw-VirtualBox:~/projects/laradock$ sudo vi .env
+更改APP_CODE_PATH_HOST的路徑
+Step2
+dw@dw-VirtualBox:~/projects/laradock$ docker-compose stop
+暫停docker
+Step3
+dw@dw-VirtualBox:~/projects/laradock$ docker-compose up -d nginx mysql
+重新啟動docker
+
+
+
+
+
+在docker中安裝redis
+http://kael-aiur.com/docker/%E4%BD%BF%E7%94%A8docker%E7%9A%84redis%E9%95%9C%E5%83%8F.html     !!!!!

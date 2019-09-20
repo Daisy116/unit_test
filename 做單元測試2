@@ -1,0 +1,44 @@
+sudo composer update --no-scripts
+composer update
+composer dump-autoload -o
+使用  vendor/bin/phpunit tests/Feature/ExampleTest.php   就可以跑？！
+--------------------------------------------------------------------------------------------------
+2019_08_15Homework:
+
+phpunit BulletinControllerTest.php
+dw@dw-VirtualBox:/etc/2019_08_15Homework$ vendor/bin/phpunit tests/BulletinControllerTest.php
+dw@dw-VirtualBox:/etc/2019_08_15Homework$ vendor/bin/phpunit tests/Feature/ExampleTest.php
+
+php artisan config:clear
+vendor/bin/phpunit tests/Unit/PostTest.php
+
+
+
+
+
+
+==================================================================================================
+當在tests/路徑底下,使用phpunit --color a.php,使結果變色！！
+而當在總資料夾中,使用vendor/bin/phpunit tests/a.php,結果會自動變色！！
+==================================================================================================
+如何創測試用的資料庫
+https://jsnwork.kiiuo.com/archives/3054/laravel-unit-test-%E5%96%AE%E5%85%83%E6%B8%AC%E8%A9%A6%E6%95%99%E5%AD%B8/
+
+dw@dw-VirtualBox:/etc/2019_08_15Homework$ php artisan config:clear
+Configuration cache cleared!
+// 清除快取，使之可以讀取 .env.testing
+
+dw@dw-VirtualBox:/etc/2019_08_15Homework$ php artisan migrate --env=testing
+Migration table created successfully.
+// 在資料庫創建空的資料表
+
+dw@dw-VirtualBox:/etc/2019_08_15Homework$ php artisan make:model Post
+Model created successfully.
+
+dw@dw-VirtualBox:/etc/2019_08_15Homework$ php artisan make:factory PostFactory --model=Post
+Factory created successfully.
+// 建立測試資料工廠
+
+dw@dw-VirtualBox:/etc/2019_08_15Homework$ php artisan make:test PostTest --unit
+Test created successfully.
+// 建立單元測試在tests\Unit\PostTest.php

@@ -1,0 +1,124 @@
+https://blog.johnsonlu.org/phpunit/    !!!!!!!!!!!!!!!!
+https://www.slideshare.net/jaceju/beginning-phpunit     !!!!!!!!!!!
+https://jsnwork.kiiuo.com/archives/3054/laravel-unit-test-%E5%96%AE%E5%85%83%E6%B8%AC%E8%A9%A6%E6%95%99%E5%AD%B8/      !!!!!!!!!!!!創測試資料庫的
+https://docs.laravel-dojo.com/laravel/5.5/database-testing   !!!資料庫測試
+https://www.slideshare.net/dpc/new-features-phpunit-33-sebastian-bergmann   介紹Annotations
+https://gist.github.com/jaceju/c415c1b42daf4c589f2a   有試過,但沒成功
+https://laravel.com/docs/5.8/http-tests    laravel的HTTP Tests
+
+
+實做範例：
+（在phpunit中）dw@dw-VirtualBox:/etc/phpunit/tests$ phpunit MathTest.php
+
+（在phpunit中）dw@dw-VirtualBox:/etc/phpunit/tests$ phpunit MyMathClassTest
+
+（在phpunit中）dw@dw-VirtualBox:/etc/phpunit/tests$ phpunit --testdox MySpecification
+
+
+
+ctrl + ㄤ  => 在記事本中插入表情符號
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+在該資料夾的終端機中,輸入
+phpunit MathTest.php
+(1 test, 2 assertion)，代表一組測試二筆測資
+===================================================================================================
+類名(class)需要以 *Test 結尾，繼承 PHPUnit_Framework_TestCase。
+需要測試的方法(function)需要一 test 開頭，表明是一個測試方法。
+===================================================================================================
+**單元測試又稱為模塊測試, 是針對程序模塊（軟體設計的最小單位）來進行正確性檢驗的測試工作。 程序單元是應用的最小可測試部件。**
+測試金字塔
+開源測試框架很多，這裡只簡單說說比較流行的組合以及本例子中要使用的框架：
+    Junit 是最簡單最基本的 Java 單元測試框架。
+    Mockito 強大的 Java 測試框架，強大之處在於能很方便的模擬對象，改變對象行為，同時提供了很多驗證API。
+    espresso：google 提供的 U I測試框架。
+原文網址：https://kknews.cc/code/yvabok.html
+===================================================================================================
+進行單元測試一般通過以下四步：
+1. 針對生產程式碼類 Class 的測試寫在類 ClassTest中。
+2. ClassTest（通常）繼承自 PHPUnit\Framework\TestCase。
+3. 測試都是命名為 test* 的公用方法。也可以在方法的文件註釋塊(docblock)中使用 @test 標註將其標記為測試方法。
+4. 在測試方法內，類似於 assertEquals()這樣的斷言方法用來對實際值與預期值的匹配做出斷言判斷。
+Class 名稱要與檔名一致
+每一個 Method 名稱應該都描述著這個測試在測什麼，並以 test 為開頭
+===================================================================================================
+默认情况下，tests 目录包含了两个子目录：Feature 和 Unit，分别用于功能测试和单元测试，单元测试专注于小的、相互隔离的代码，实际上，大部分单元测试可能都是聚焦于单个方法。功能测试可用于测试较大区块的代码，包括若干组件之前的交互，甚至一个完整的 HTTP 请求。
+===================================================================================================
+assertEquals:(當想證明兩個值是相等的時)
+$this->assertEquals(EXPECTED, ACTUAL, OPTIONAL MESSAGE);
+
+assertContains:(假設需要証明陣列中包含一個特定的值時)
+$this->assertContains(NEEDLE, HAYSTACK, OPTIONALMESSAGE);
+範例:
+public function testLaravelDevsIncludesDayle()
+{
+    $names = ['Taylor', 'Shawn', 'Dayle'];
+    $this->assertContains('Dayle', $names);
+}
+而反向 assertion 也是可用的,範例:
+$names = ['Taylor', 'Shawn', 'Dayle'];
+$this->assertNotContains('Troll', $names);  // true
+
+assertArrayHasKey:(當需要 assert 陣列裡的 key，而不是 value時)
+範例:
+public function testFamilyRequiresParent()
+{
+    $family = [
+        'parents' => 'Joe',
+        'children' => ['Timmy', 'Suzy']
+    ];
+    $this->assertArrayHasKey('parents', $family);  // true
+}
+
+assertInternalType:(用來測試變數的型態)
+範例:
+public function testFamilyRequiresParent()
+{
+    $family = [
+        'parents' => 'Joe',
+        'children' => ['Timmy', 'Suzy']
+    ];
+    $this->assertInternalType('array', $family['parents']);  // false
+    $this->assertInternalType('string', $family['parents']);  // true
+}
+
+Asserting Exceptions:(拋出一個異常，在 PHPUnit 我們使用 doc-blocks 來 assert exceptions)???
+範例:
+/**
+ * @expectedException InvalidArgumentException
+ */
+public function testCalculatesCommission()
+{
+    $commission = new Commission;
+    $commission->setSalePrice('fifteen dollars');
+}
+
+https://blog.dtask.idv.tw/Books/Laravel_Testing_Decoded_Chapter_2/
+===================================================================================================
+https://phpunit.de/manual/6.5/en/appendixes.assertions.html   所有assertion方法??
+===================================================================================================
+Phpunit中的Annotations(註解)(為phpunit中的高階概念和用法):
+Annotations不影響程式的執行,但相關的軟體工具或框架能夠將其轉換成特殊的後設資料標記，以方便開發者以更少的程式碼去提高效率
+===================================================================================================
+https://blog.csdn.net/younger_china/article/details/72887434   单元测试与功能测试的区别
+===================================================================================================
+可用的斷言
+Laravel 為 PHPUnit 測試提供了幾個資料庫斷言：
+方法 	                                                說明
+$this->assertDatabaseHas($table, array $data); 	        斷言資料庫中的資料表是否有給定的資料。
+$this->assertDatabaseMissing($table, array $data); 	斷言資料庫中的資料表是否沒有給定的資料。
+$this->assertSoftDeleted($table, array $data); 	        斷言給定的記錄是否被軟刪除。
+
+一般常用測試無非就是 "斷言"，說白了，就是看看產生的結果是不是符合預期，如果是，那就證明，已經測試通過，否則，失敗，說明邏輯處理，存在一定的差異，導致不符合預期。
