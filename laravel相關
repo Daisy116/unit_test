@@ -1,0 +1,190 @@
+Laravel middleware練習
+/home/dw/LARAVEL_login
+
+
+Laravel參數驗證  Validation
+use Illuminate\Support\Facades\Validator;      #要加上這一行,才可使用Validator::make
+https://blog.csdn.net/i6448038/article/details/51246045   !!!!!!!!(後面的provider不懂,沒連資料庫吧?)
+https://blog.keniver.com/2017/05/laravel-optional-integer-input-length-check/     !!!!
+
+在resources/lang/en/validation.php中改錯誤訊息成中文字!!
+
+
+
+Laravel 的 Validation 非常強大, 若要讓欄位選填並且只有在有填寫內容時才進行其他驗證, 可以使用內建的 nullable 達到效果, 而不需要使用 required  !!!!!!!!!!!!
+驗證數字可以用 numeric 來達到驗證, numeric 和 integer 的差別??
+用 Laravel 內建 Validation 進行長度檢查時，如果用 min 與 max 來檢查, 結果無論如何都會觸發長度過長的錯誤, 仔細看過手冊後發現 Laravel 會去猜輸入的型別, 如果猜測結果是數字則 min, max 會變成比大小(min < x < max) 而不是預期的長度檢查, 正確長度檢查要使用 digits_between 這個規則才對 !!!!!!!!!!
+===================================================================================================
+Laravel middleware練習
+https://ithelp.ithome.com.tw/articles/10208371?sc=iThelpR    !!!!!!!!!!!!!!
+
+Artisan command:   php artisan make:middleware <filename>
+Laravel 預設和新創建的 middleware 都存放在 app/Http/Middleware 裡.
+
+所有的請求都需要在 app/Http/Kernel.php 加入清單，所以在app/Http/Kernel.php中的protected $routeMiddleware加上     
+    = [
+        'before' => \App\Http\Middleware\BeforeMiddleware::class,
+        'after' => \App\Http\Middleware\AfterMiddleware::class,
+    ];
+
+接著在routes/web.php中加上
+Route::middleware('before')->get('/before', function (){
+    echo 'in Route';
+});
+
+Route::middleware('after')->get('/after', function (){
+    echo 'in Route';
+});
+
+
+在BeforeMiddleware的function中，呼叫帶有 $request 的 $next 方法，即可將請求傳遞到更深層的應用程式(允許「通過」中介層)。即       return $next($request);
+
+---------------------------------------------------------------------------------------------------
+全域中介層
+https://laravel.tw/docs/5.2/middleware   !!!!!!!!!!!!
+
+將中介層的類別加入到 app/Http/Kernel.php 的 $middleware 屬性清單列表中，則每個route都會經過$middleware中的中介層!!
+
+也可在 app/Http/Kernel.php 中的 $routeMiddleware 屬性清單列表中，自訂中介層的名字，方便以後個別呼叫使用。例如:
+protected $routeMiddleware = [
+    'auth' => \App\Http\Middleware\Authenticate::class,
+    'guest' => \App\Http\Middleware\RedirectIfAuthenticated::class,
+];
+
+路由呼叫中介層方法使用 middleware 鍵來指派，例如呼叫auth的中介層:
+Route::get('<url名字>', ['middleware' => 'auth', function () {
+    //
+}]);
+而路由指派多個中介層，用陣列來指定：
+Route::get('/', ['middleware' => ['first', 'second'], function () {
+    //
+}]);
+除了使用陣列之外，你也可以在路由的定義之後鏈結 middleware 方法:
+Route::get('/', function () {
+    //
+}])->middleware(['first', 'second']);
+
+使用 $middlewareGroups 屬性將多個中介層組成一個群組，指派給路由時只要給群組名即可，而Laravel 內建了 web 及 api 中介層群組，包含了你想套用在 web UI 與 API 路由常用的中介層，例如:
+protected $middlewareGroups = [
+    'web' => [
+        \App\Http\Middleware\EncryptCookies::class,
+        \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
+        \Illuminate\Session\Middleware\StartSession::class,
+        \Illuminate\View\Middleware\ShareErrorsFromSession::class,
+        \App\Http\Middleware\VerifyCsrfToken::class,
+    ],
+
+    'api' => [
+        'throttle:60,1',
+        'auth:api',
+    ],
+];
+中介層群組呼叫方式:
+Route::group(['middleware' => ['web']], function () {
+    //
+});
+
+---------------------------------------------------------------------------------------------------
+Laravel 多个中间件的执行顺序
+https://learnku.com/articles/14174/the-execution-order-of-multiple-middleware-in-laravel
+
+在Illuminate\Foundation\Http\Kernel，有$middlewarePriority，其中包含中介層群組，且裡面的中介層会按照顺序优先在其他中间件之前执行
+而不在 $middlewarePriority 列表中的中间件，是按照在路由配置里调用的顺序来的
+在 Route::group 里定义的，先执行外层，后执行内层，而在陣列中呼叫的中介層，先执行写在陣列前面的，后执行写在后面的，例如:
+Route::group(['middleware' => 'outer'], function () {
+    Route::group(['middleware' => 'inner'], function () {
+        Route::group(['middleware' => ['array1', 'array2', 'auth:api']], function () {
+            Route::get('test', function () {
+                return;
+            });
+        });
+    });
+});
+是按照 outer 、 inner 、 array1 、 array2 的顺序执行
+===================================================================================================
+Laravel pub/sub
+https://ithelp.ithome.com.tw/articles/10195022      // redis Pub/Sub的簡單終端指令
+https://ithelp.ithome.com.tw/articles/10106385    !!!!!但和laravel無關...
+http://hk.voidcc.com/question/p-mlxhiker-yd.html   ??
+
+
+
+以下測試失敗
+https://www.cnblogs.com/phpper/p/6867786.html
+https://phperzh.com/articles/2947
+https://www.cnblogs.com/yanweifeng/p/10565423.html
+https://github.com/laravel/horizon/issues/659   更改這篇寫的配置
+
+
+Laravel 的集合 Collection
+Laravel config / event / collect
+https://learnku.com/laravel/t/26110           // laravel collect練習(未完)
+https://laravel.tw/docs/5.2/collections       // laravel collect練習(練一半，太多了)
+https://learnku.com/laravel/t/26110     !!!!!// laravel collect練習(練一半)
+https://www.kancloud.cn/curder/laravel/409625
+--------------------------------------------------------------------------------------------------
+Laravel 的事件 Event與監聽器 Listsener
+https://www.itread01.com/content/1542596833.html   // laravel event練習(改成echo)
+https://bgpsekai.thisistap.com/tutorials/2017/07/laravel-5-4-events-%E4%BA%8B%E4%BB%B6%E7%B3%BB%E7%B5%B1/     // laravel event練習(參考,沒實做)
+https://jsxku.com/archives/20070          // laravel event練習(參考,沒實做)
+https://www.jb51.net/article/157682.htm   // laravel event練習(有實做，但AuthCode::create($event->data);有問題)
+https://juejin.im/post/5b1f5db05188257d7270a194    // laravel event練習(參考,沒實做)
+https://www.jb51.net/article/81272.htm    // laravel event練習(參考,實做不了)
+
+
+使用event，多人开发也是单独写自己的Listeners就可以了。
+先到App\Providers\EventServiceProvider.php進行註冊，告诉系统當有人用event()调用了事件之后要被谁监听得到。例如
+	// 把app/Listeners中的class都監聽
+	'App\Events\SqlRecorded' => [
+	    'App\Listeners\RecordSqlNotification',
+	],
+
+	// 用户注册后的事件(1個event可以有很多listener!!!)
+        'App\Events\Register' => [
+            // 发送广告邮件
+            'App\Listeners\SendAdMail',
+            // 发送短信
+            'App\Listeners\SendSms',
+            // 发送帮助信息
+            'App\Listeners\SendHelpInformation',   
+        ],
+之後執行php artisan event:generate來生成事件的Listener
+接下來到App\Listener\RecordSqlNotification處理事件觸發後的後續，在handle function就是监听器里面需要执行的操作，有个很方便的功能就是如果implements ShouldQueue这个接口的话就会异步队列执行，如果去掉的话就是同步执行。
+自己手動觸發事件時，記得加上use App\Events\SqlRecorded;
+		$event = new SqlRecorded();
+		event($event);
+
+//触发事件，以后所有需要注册后要做的事情，都不需要再controller中加代码了，我们只需要管理事件就好了
+//event方法是laravel自带方法, $uid是外部参数，看你需要做什么，传什么参数了。注册之后肯定有$uid的嘛
+        event(new Register($uid));
+==================================================================================================
+Laravel swagger(寫API文件的)
+https://caihongtengxu.github.io/2018/20180827/index.html
+https://netivism.com.tw/blog/436
+==================================================================================================
+命名控制器路由，用as改route名字，用uses呼叫該路由使用的方法
+Route::get('foo', ['uses' => 'FooController@method', 'as' => 'name']);
+呼叫方法:   $url = route('name');
+===================================================================================================
+https://ithelp.ithome.com.tw/articles/10202291   !!!!!!!!!!!!
+https://learnku.com/docs/the-laravel-way/5.6/final-chapter-response-send-and-terminate/4388    未看
+
+index.php 的任務，其中   
+$kernel = $app->make(Illuminate\Contracts\Http\Kernel::class);
+第一個生產任務就是 Http Kernel。Http Kernel 正如其名，是處理 Http 的核心。
+
+$response = $kernel->handle(
+    $request = Illuminate\Http\Request::capture()
+);
+使用 handle() 處理 Illuminate\Http\Request 物件
+
+$response->send();
+呼叫 Symfony\Component\HttpFoundation\Response 的 send() ，這將會把 response 裡所存放的 header 與 content 輸出到瀏覽器。
+在這之前，對 response 所做的任何操作，都只是在記憶體運作，而不會有任何輸出。
+
+$kernel->terminate($request, $response);
+最後呼叫 Http Kernel 的 terminate()，觸發 terminate 「事件」。它並不是用 Event 實作，而是直接觸發 Middleware 的 terminate() 與 Application 的 terminatingCallbacks 屬性上
+===================================================================================================
+
+Laravel RESTful 資源控制器
+Laravel Eloquent

@@ -1,6 +1,11 @@
 解鎖資料夾權限的方法：
 移動到該資料夾上一層後,輸入
 sudo chown -R dw ./2019_08_15Homework
+
+下載gitlab專案的方法
+ssh-add -k ~/.ssh/id_daisy.4096
+輸入私鑰密碼(電話)
+git clone ssh://git@rd1-gitlab.vir888.com:16688/......
 ===================================================================================================
 放在var/www/html資料夾中的檔案開啟方法
 http://10.0.2.15/*.PHP
@@ -21,6 +26,8 @@ https://www.itread01.com/content/1545426741.html
 
 內含php相關連結
 http://codertw.com/%E7%A8%8B%E5%BC%8F%E8%AA%9E%E8%A8%80/201978/
+PHP常用與數據庫連結技巧
+https://www.jb51.net/Special/231.htm
 
 
 执行以下,即可获得完整的phpinfo输出
@@ -58,3 +65,47 @@ $URL='http://'.$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
 echo $URL;
 這樣就可以順利取得現在的網址囉！這只是個簡單的範例而已，如果網址結構較為複雜，可以調用更多的 $_SERVER 來取得詳細的部分，請參考 php.net 的 $_SERVER 介紹
 ===================================================================================================
+Simple PHP try catch example
+https://stackify.com/php-try-catch-php-exception-tutorial/   !!!!!!!!!!!!!!
+http://asika.windspeaker.co/post/3503-php-exceptions         未看
+
+try {
+    // 要執行的程式碼放這
+}
+catch (exception $e) {
+    // 處理exception的程式碼放這
+}
+finally {
+    // finally可寫可不寫，此處程式碼一定會執行
+}
+--------------------------------------------------------------------------------------------------
+try塊包含可能引發異常的代碼。將執行try塊中的所有代碼，直到可能引發異常為止。
+throw關鍵字用於表示PHP異常的發生。然後，PHP運行時將嘗試查找catch語句來處理該異常。
+catch僅當try代碼塊中發生異常時，才會調用此代碼塊。catch塊中的代碼必須處理引發的異常。
+finally是在PHP 5.5中，才有的語句。無論是否已引發異常，並且在正常執行恢復之前，finally塊中的代碼將始終在try和catch塊之後執行。這對於諸如無論是否發生異常都關閉數據庫連接之類的方案很有用。finally不僅用於異常處理，還用於執行清除代碼，例如關閉文件，關閉數據庫連接等。當try catch塊退出時，finally塊總是執行。這樣可以確保即使發生意外異常，也可以執行finally塊。
+---------------------------------------------------------------------------------------------------
+PHP支持在try catch中使用多個catch塊。這使我們可以根據引發的異常類型來自定義代碼。對於自定義向用戶顯示錯誤消息的方式，或者自定義重試首次失敗的內容時，這很有用。
+try {
+    // 要執行的程式碼放這
+}
+catch (Exception $e) {
+    echo $e->getMessage();
+}
+catch (InvalidArgumentException $e) {
+    echo $e->getMessage();
+}
+--------------------------------------------------------------------------------------------------
+創建自定義PHP異常類型，自定義異常類繼承自PHP的Exception類的屬性，您可以向其添加自定義函數。
+自定義異常用於可能不希望向用戶顯示異常的所有詳細信息，或者可以顯示用戶友好的消息並在內部記錄錯誤消息以進行監視。
+class DivideByZeroException extends Exception {};
+==================================================================================================
+
+
+
+
+
+
+
+待看
+https://stackify.com/php-error-handling-guide/
+https://stackify.com/php-frameworks-development/

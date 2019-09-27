@@ -1,3 +1,6 @@
+/home/dw/redis_test
+
+
 php artisan make:controller <檔名>
 php artisan make:command <檔名>
 php artisan event:generate      讓app/Providers/EventServiceProvider.php中的指令執行，建立app/Events/BlogView.php和app/Listeners/BlogViewListener.php
@@ -104,47 +107,4 @@ https://www.itread01.com/content/1542344290.html    !!!!!!!!!!!!!!!
 
 
 ===================================================================================================
-Laravel參數驗證  Validation
-use Illuminate\Support\Facades\Validator;      #要加上這一行,才可使用Validator::make
-https://blog.csdn.net/i6448038/article/details/51246045   !!!!!!!!(後面的provider不懂,沒連資料庫吧?)
-https://blog.keniver.com/2017/05/laravel-optional-integer-input-length-check/     !!!!
-
-在resources/lang/en/validation.php中改錯誤訊息成中文字!!
-
-
-
-Laravel 的 Validation 非常強大, 若要讓欄位選填並且只有在有填寫內容時才進行其他驗證, 可以使用內建的 nullable 達到效果, 而不需要使用 required  !!!!!!!!!!!!
-驗證數字可以用 numeric 來達到驗證, numeric 和 integer 的差別??
-用 Laravel 內建 Validation 進行長度檢查時，如果用 min 與 max 來檢查, 結果無論如何都會觸發長度過長的錯誤, 仔細看過手冊後發現 Laravel 會去猜輸入的型別, 如果猜測結果是數字則 min, max 會變成比大小(min < x < max) 而不是預期的長度檢查, 正確長度檢查要使用 digits_between 這個規則才對 !!!!!!!!!!
-===================================================================================================
-Laravel middleware練習
-https://ithelp.ithome.com.tw/articles/10208371?sc=iThelpR    !!!!!!!!!!!!!!
-
-Artisan command:   php artisan make:middleware <filename>
-
-在app/Http/Kernel.php中的protected $routeMiddleware加上     
-    = [
-        'before' => \App\Http\Middleware\BeforeMiddleware::class,
-        'after' => \App\Http\Middleware\AfterMiddleware::class,
-    ];
-
-接著在routes/web.php中加上
-Route::middleware('before')->get('/before', function (){
-    echo 'in Route';
-});
-
-Route::middleware('after')->get('/after', function (){
-    echo 'in Route';
-});
-===================================================================================================
-
-https://ithelp.ithome.com.tw/articles/10195022      // redis Pub/Sub的簡單終端指令
-https://ithelp.ithome.com.tw/articles/10106385    !!!!!但和laravel無關...
-http://hk.voidcc.com/question/p-mlxhiker-yd.html   ??
-
-以下測試失敗
-https://www.cnblogs.com/phpper/p/6867786.html
-https://phperzh.com/articles/2947
-https://www.cnblogs.com/yanweifeng/p/10565423.html
-https://github.com/laravel/horizon/issues/659   更改這篇寫的配置
 

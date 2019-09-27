@@ -12,11 +12,6 @@ dw@dw-VirtualBox:/etc/2019_08_15Homework$ vendor/bin/phpunit tests/Feature/Examp
 php artisan config:clear
 vendor/bin/phpunit tests/Unit/PostTest.php
 
-
-
-
-
-
 ==================================================================================================
 當在tests/路徑底下,使用phpunit --color a.php,使結果變色！！
 而當在總資料夾中,使用vendor/bin/phpunit tests/a.php,結果會自動變色！！
@@ -42,3 +37,13 @@ Factory created successfully.
 dw@dw-VirtualBox:/etc/2019_08_15Homework$ php artisan make:test PostTest --unit
 Test created successfully.
 // 建立單元測試在tests\Unit\PostTest.php
+
+
+===================================================================================================
+DB相關的:(沒細看)
+PS:  schema 中文就是結構
+https://blog.johnsonlu.org/mysql-db-schema-%E8%A8%AD%E8%A8%88%E5%8E%9F%E5%89%87/    !!
+https://blog.csdn.net/u010429286/article/details/79022484
+https://blog.xuite.net/tolarku/blog/29614077-SQL%EF%BC%9ADB+%E7%89%A9%E4%BB%B6%E7%9A%84%E5%90%8D%E7%A8%B1+-+Server.DB.Schema.Table
+https://zh.wikipedia.org/wiki/%E7%B6%B1%E8%A6%81_(%E8%B3%87%E6%96%99%E5%BA%AB)
+https://dotblogs.com.tw/siro228/1
