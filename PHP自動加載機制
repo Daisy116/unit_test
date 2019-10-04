@@ -1,0 +1,120 @@
+Google: PSR-4 lookup
+***************************************************************************************************
+PHP中PSR-[0-4]规范
+https://www.zybuluo.com/phper/note/65033
+含程式碼的寫法規範
+***************************************************************************************************
+PHP/Composer是如何加载一个类的
+https://zhuanlan.zhihu.com/p/37085149
+
+PHP/composer开发中，我们只需要require 'vendor/autoload.php'，然后就可以直接使用各种类了。那么这些类是如何加载的呢？
+composer的autoload注册在 'vendor/autoload.php' 中完成，这个文件完成了两件事：
+    1. include vendor/composer/autoload_real.php
+    2. 调用ComposerAutoloaderInit<rand_id>::getLoader()
+vendor/composer/autoload_real.php仅仅定义了ComposerAutoloaderInit<rand_id>类和composerRequire<rand_id>函数。
+<rand_id>是类似id一样的东西，确保要加载多个composer的autoload的时候不会冲突。composerRequire<rand_id>则是为了避免ComposerAutoloader require文件的时候，文件修改了ComposerAutoloader的东西。
+
+// 这个函数处理了PSR-0和PSR-4的加载规则，如果是PSR-0或者PSR-4，则需要看看findFileWithExtension的逻辑了：
+$file = $this->findFileWithExtension($class, '.php');
+    1. $prefix不为空的PSR-4加载规则:
+    比如类A\B\C，先找A\B\对应目录下面的C.php；再找A\对应目录下面的B\C.php；以此类推
+    2. $prefix为空的PSR-4加载规则
+    如果找不到，那就在fallbackDirsPsr4下找A\B\C.php文件
+这样，composer就找到了这个类对应的文件，并且include了。
+===================================================================================================
+谈谈 PHP 的自动加载机制与 Laravel 中的具体实现
+https://zhuanlan.zhihu.com/p/61729937
+
+为何需要自动加载
+
+在没有自动加载机制前，我们使用外部类都需要手动使用 include() 或 require() 进行文件引入，如果只是小项目的开发还能 hold 住，但一旦项目规模扩大就是一场噩梦：
+    1. 需要使用很多类时容易造成遗漏或引入不必要的文件
+    2. 若要避免重复引入需使用 require_once()，但 require_once() 的速度要比 require() 慢上 2-3 倍
+为了解决上述问题，PHP 提供了一个解决方案：类的自动加载（autoload）机制。
+
+__autoload()
+	在 PHP5 中，若我们使用一个没有加载的类，PHP 会自动运行 __autoload() 函数。因此，我们可以对	
+	__autoload() 进行自定义，从而完成类的加载。
+
+	__autoload() 优点
+    1. 摆脱长长的 include() 与 require()
+	2. 使用类时才会引入文件，实现了 lazy loading
+	3. 无需知道类的实际文件地址，实现了逻辑和实体文件的分离
+
+	__autoload()存在的问题
+    1. 是全局函数，只能定义一次，不够灵活
+	2. 类名和文件名的映射规则可能各不相同，都在一个函数中实现造成函数臃肿混乱
+解决上述问题，我们需要将不同的映射关系写到不同的 __autoload() 中去，再进行统一的注册和管理。
+因此，SPL Autoload 系列函数就出现了，它帮助我们使用 autoload 调用栈。
+===================================================================================================
+PHP中的自动加载
+https://www.zybuluo.com/phper/note/66447
+
+自动加载就是我们在new一个class的时候，不需要手动去写require来导入这个class.php文件，程序自动帮我们加载导入进来。
+如何才能自动加载呢？ PHP 5.2版本更新了自动加载需要的一个魔术方法——__autoload($class_name)
+自动加载的原理，就是在我们new一个class的时候，PHP系统如果找不到你这个类，就会去自动调用本文件中的__autoload($class_name)方法，我们new的这个class_name 就成为这个方法的参数。
+所以我们就可以在这个方法中根据我们需要new class_name的各种判断和划分就去require对应的路径类文件，从而实现自动加载。
+例如:
+	function __autoload($className)
+	{
+		require $className . '.php';
+	}
+
+小的项目，用__autoload()就能实现基本的自动加载了。
+但是如果一个项目过大，或者需要不同的自动加载来加载不同路径的文件，这个时候__autoload就悲剧了，
+原因是一个项目中仅能有一个这样的 __autoload() 函数，因为 PHP 不允许函数重名，也就是说你不能声明2个__autoload()函数文件，否则会报致命错误
+
+所以spl_autoload_register()这样又一个牛逼函数诞生了，并且取而代之它。它执行效率更高，更灵活
+当我们去new一个找不到的class时，PHP就会去自动调用sql_autoload_resister注册的函数，这个函数通过它的参数传进去
+spl_autoload_register是可以多次重复使用的，这一点正是解决了__autoload的短板，那么如果一个页面有多个，执行顺序是按照注册的顺序，一个一个往下找，如果找到了就停止。
+例如:
+    function load1($className)
+    {
+        echo 1;
+        require $className . '.php';
+    }
+    spl_autoload_register('load1');    // 将load1函数注册到自动加载队列中。
+    $db = new DB();                    // 找不到DB类，就会自动去调用刚注册的load1函数了
+
+如果你同时使用spl_autoload_register和__autoload，__autoload会失效！！！
+我们希望__autoload继续有效，就可以也将它注册进来，就可以继续使用。例如:
+	//注册了3个
+	spl_autoload_register('load1');
+	spl_autoload_register('load2');
+	spl_autoload_register('__autoload'); 
+
+可以打印spl_autoload_functions()函数，来显示一共注册了多少个自动加载：
+var_dump(spl_autoload_functions());
+===================================================================================================
+PHP中的命名空间
+https://www.zybuluo.com/phper/note/65479
+
+namespace，中文叫命名空间，它用来为了避免代码命名重复。因为包括php在内的很多语言，是不允许function name 或者 class name重复的，如果你同时require 2个class ,如果调用的对应的class name是一样，系统是会报错的。所有，一般的对面对象的语言都会有namespace，用来避免这种情况出现。
+PS:  php在5.3之前是不支持namespace的
+
+用namespace的方式调用:
+    require './name.php';       // 如果不用use，用require的話
+    namespace_name\class_name::function_name();    // static function 直接使用
+
+    $變數名 = new namespace_name\class_name;       //一般方式，先new，再调用
+    $變數名->function_name();
+    ---------------------------------------------
+    use namespace_name\class_name
+    class_name::function_name();
+
+    $變數名 = new class_name;
+    $變數名->function_name();
+    ----------------------------------------------
+    use namespace_name\class_name as <取别名>
+    <取别名>::function_name();
+
+    $變數名 = new <取别名>;
+    $變數名->function_name();
+直接使用use导入就好了。用as别名反而容易造成错误和复杂度
+
+如何声明一个namespace
+    namespce <name = 上一層的项目的目录\......>
+这一行必须写在一个php文件的最开头，前面不能有任何的语句，不然就会报致命错误
+另外  <?php   ,这个声明是php的文件的标记也必须得定格写，前面不能有空格, 不然也会报错。这一点极其容易忽略，就产生错误了。
+
+use使用的是绝对路径。    要注意引用的路徑到底是絕對還是相對的!!

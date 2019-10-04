@@ -1,0 +1,34 @@
+laravel @param
+https://learnku.com/articles/6067/5-methods-for-laravel-to-obtain-routing-parameters-route-parameters
+https://docs.laravel-dojo.com/php-the-right-way/gh-pages/phpdoc
+https://laravel.tw/docs/5.2/requests
+
+
+laravel singleton      查!!
+https://laravel.tw/docs/5.3/container
+綁定一個單例（Singleton）
+singleton 方法綁定一個類別或介面至容器中，只會被解析一次，且爾後的呼叫都會從容器中回傳相同的實例：
+$this->app->singleton('HelpSpot\API', function ($app) {
+    return new HelpSpot\API($app->make('HttpClient'));
+});
+
+
+PMO PMIS    ...?
+
+
+
+待整理
+laravel request input     !!!!!!!!!!!
+https://blog.csdn.net/i6448038/article/details/52050548
+https://blog.johnsonlu.org/laravel-http-requests/
+https://learnku.com/docs/laravel/5.5/requests/1297
+
+go語言(golang)
+http://golang-zhtw.netdpi.net/02_the_first_program/02_01_how_to_read_go_program
+https://zh.wikipedia.org/wiki/Go
+https://www.itread01.com/content/1548149969.html
+https://blog.wu-boy.com/2017/01/business-benefits-of-go/
+
+nginx代理伺服器
+https://www.itread01.com/content/1547927656.html
+https://www.itread01.com/content/1561825205.html
