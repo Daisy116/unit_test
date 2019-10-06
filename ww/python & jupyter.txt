@@ -1,0 +1,44 @@
+data website
+http://live2.gooooal.com/
+http://analysis.gooooal.com/matchlist/2019/fb_league_20191005.html
+http://live2.gooooal.com/jzspfx.html
+
+
+https://matthung0807.blogspot.com/2019/05/python-windows-python-3.html
+https://www.python.org/downloads/windows/
+
+https://matthung0807.blogspot.com/2019/08/windows-pythonpip.html
+
+
+https://medium.com/python4u/jupyter-notebook%E5%AE%8C%E6%95%B4%E4%BB%8B%E7%B4%B9%E5%8F%8A%E5%AE%89%E8%A3%9D%E8%AA%AA%E6%98%8E-b8fcadba15f
+
+
+
+
+https://ithelp.ithome.com.tw/articles/10194149   爬蟲範例，成功
+解決問題
+https://medium.com/@Epicure1709/%E4%BD%BF%E7%94%A8python%E7%9A%84selenium%E6%99%82%E9%81%87%E5%88%B0%E7%9A%84%E4%B8%80%E4%BA%9B%E5%B0%8F%E5%95%8F%E9%A1%8C-7fb5de198ff7
+https://sites.google.com/a/chromium.org/chromedriver/downloads
+http://www.pcschool.tv/cm/support/qaview.aspx?sno=87
+
+
+python --version
+python -m pip --version
+python -m pip list
+python -m pip install --upgrade pip
+pip3 install jupyter
+jupyter notebook
+
+pip install selenium
+pip install BeautifulSoup4
+
+
+
+
+
+pip install wheel
+pip install pandas
+pip install lxml
+pip install html5lib
+
+https://jerrynest.io/python-pandas-get-data/
